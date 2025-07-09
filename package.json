@@ -1,0 +1,23 @@
+{
+  "name": "motorcycle-workshop-manager",
+  "version": "1.0.0",
+  "description": "Full-stack spare-part stock management system for motorcycle workshop",
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently \"bun run dev:backend\" \"bun run dev:frontend\"",
+    "dev:backend": "cd backend && bun run dev",
+    "dev:frontend": "cd frontend && bun run dev",
+    "build": "cd frontend && bun run build",
+    "start": "cd frontend && bun run start",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "setup": "bun install && cd frontend && bun install && cd ../backend && bun install"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "workspaces": [
+    "frontend",
+    "backend"
+  ]
+}
