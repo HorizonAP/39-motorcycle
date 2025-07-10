@@ -7,7 +7,12 @@
     "dev": "bun run --watch src/index.ts",
     "build": "bun build src/index.ts --outdir=dist --target=node",
     "start": "bun run dist/index.js",
-    "seed": "bun run src/seed.ts"
+    "seed": "bun run src/seed.ts",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:watch": "vitest --watch",
+    "test:coverage": "vitest run --coverage",
+    "test:ui": "vitest --ui"
   },
   "dependencies": {
     "elysia": "^1.0.0",
@@ -21,6 +26,12 @@
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
     "@types/web-push": "^3.6.3",
-    "bun-types": "latest"
+    "bun-types": "latest",
+    "vitest": "^1.0.0",
+    "@vitest/coverage-v8": "^1.0.0",
+    "@vitest/ui": "^1.0.0",
+    "mongodb-memory-server": "^9.1.0",
+    "supertest": "^6.3.3",
+    "@types/supertest": "^6.0.2"
   }
 }
