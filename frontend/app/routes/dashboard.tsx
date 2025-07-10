@@ -1,31 +1,17 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from '@remix-run/react';
-import {
-  Grid,
-  Card,
-  CardContent,
-  Typography,
-  Box,
-  Alert,
-  CircularProgress,
-  List,
-  ListItem,
-  ListItemText,
-  Chip,
-  Button,
-  LinearProgress,
-} from '@mui/material';
-import {
-  Inventory,
-  Work,
-  Warning,
-  TrendingUp,
-  Assignment,
-  ShoppingCart,
-} from '@mui/icons-material';
 import { Layout } from '~/components/Layout';
-import { getAuthToken } from '~/utils/auth';
-import { partsApi, workOrdersApi, stockApi, Part, WorkOrder } from '~/utils/api';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card';
+import { Button } from '~/components/ui/button';
+import { Badge } from '~/components/ui/badge';
+import { 
+  Package,
+  ClipboardList,
+  AlertTriangle,
+  TrendingUp,
+  ShoppingCart,
+  Activity
+} from 'lucide-react';
 
 interface DashboardStats {
   totalParts: number;
@@ -33,6 +19,25 @@ interface DashboardStats {
   activeWorkOrders: number;
   completedWorkOrders: number;
   totalStockValue: number;
+}
+
+interface Part {
+  _id: string;
+  sku: string;
+  name: string;
+  qtyAvailable: number;
+  minStockLevel: number;
+  unitPrice: number;
+}
+
+interface WorkOrder {
+  _id: string;
+  workOrderNo: string;
+  customer: {
+    name: string;
+  };
+  status: string;
+  createdAt: string;
 }
 
 export default function DashboardPage() {
