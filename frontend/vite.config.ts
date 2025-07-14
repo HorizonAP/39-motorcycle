@@ -1,8 +1,17 @@
 import { vitePlugin as remix } from '@remix-run/dev';
 import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
+import path from 'path';
 
 export default defineConfig({
+  server: {
+    port: 3000,
+  },
+  resolve: {
+    alias: {
+      '~': path.join(__dirname, 'app'),
+    },
+  },
   plugins: [
     remix({
       future: {
@@ -15,7 +24,7 @@ export default defineConfig({
       registerType: 'autoUpdate',
       workbox: {
         navigateFallback: null,
-        globPatterns: ['**/*.{js,css,html,ico,png,svg}']
+        globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
       },
       manifest: {
         name: 'Motorcycle Workshop Manager',
@@ -31,18 +40,18 @@ export default defineConfig({
           {
             src: '/pwa-192x192.png',
             sizes: '192x192',
-            type: 'image/png'
+            type: 'image/png',
           },
           {
             src: '/pwa-512x512.png',
             sizes: '512x512',
-            type: 'image/png'
-          }
-        ]
-      }
-    })
+            type: 'image/png',
+          },
+        ],
+      },
+    }),
   ],
   define: {
-    'process.env': process.env
-  }
+    'process.env': process.env,
+  },
 });

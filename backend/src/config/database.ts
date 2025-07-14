@@ -33,8 +33,15 @@ const connectDB = async () => {
       console.log('✅ MongoDB reconnected');
     });
   } catch (error) {
-    console.error('❌ Database connection error:', error);
-    process.exit(1);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error('❌ Database connection error:', errorMessage);
+    console.log('⚠️ Server will continue without database connection');
+    console.log(
+      '🔧 To fix: Check MongoDB Atlas IP whitelist and connection string'
+    );
+
+    // Don't exit the process, let the server continue
+    // This allows frontend-backend integration testing even without DB
   }
 };
 

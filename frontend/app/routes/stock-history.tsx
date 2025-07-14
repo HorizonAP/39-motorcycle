@@ -19,18 +19,16 @@ import {
   TextField,
   MenuItem,
 } from '@mui/material';
-import {
-  TrendingUp,
-  TrendingDown,
-  Search,
-} from '@mui/icons-material';
-import { Layout } from '~/components/Layout';
-import { getAuthToken } from '~/utils/auth';
-import { stockApi, StockMovement } from '~/utils/api';
+import { TrendingUp, TrendingDown, Search } from '@mui/icons-material';
+import { Layout } from '../components/Layout';
+import { getAuthToken } from '../utils/auth';
+import { stockApi, StockMovement } from '../utils/api';
 
 export default function StockHistoryPage() {
   const [movements, setMovements] = useState<StockMovement[]>([]);
-  const [filteredMovements, setFilteredMovements] = useState<StockMovement[]>([]);
+  const [filteredMovements, setFilteredMovements] = useState<StockMovement[]>(
+    []
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
@@ -57,13 +55,14 @@ export default function StockHistoryPage() {
     let filtered = movements;
 
     if (typeFilter !== 'all') {
-      filtered = filtered.filter(movement => movement.type === typeFilter);
+      filtered = filtered.filter((movement) => movement.type === typeFilter);
     }
 
     if (searchTerm) {
-      filtered = filtered.filter(movement =>
-        movement.refNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        movement.notes?.toLowerCase().includes(searchTerm.toLowerCase())
+      filtered = filtered.filter(
+        (movement) =>
+          movement.refNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          movement.notes?.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
@@ -97,7 +96,7 @@ export default function StockHistoryPage() {
   };
 
   const getMovementColor = (type: string) => {
-    return type === 'IN' ? 'success' as const : 'error' as const;
+    return type === 'IN' ? ('success' as const) : ('error' as const);
   };
 
   if (loading) {
@@ -155,7 +154,11 @@ export default function StockHistoryPage() {
             <CardContent sx={{ textAlign: 'center' }}>
               <Typography variant="h6">{filteredMovements.length}</Typography>
               <Typography variant="body2" color="textSecondary">
-                {typeFilter === 'all' ? 'Total Movements' : `${typeOptions.find(t => t.value === typeFilter)?.label} Movements`}
+                {typeFilter === 'all'
+                  ? 'Total Movements'
+                  : `${
+                      typeOptions.find((t) => t.value === typeFilter)?.label
+                    } Movements`}
               </Typography>
             </CardContent>
           </Card>
@@ -180,7 +183,7 @@ export default function StockHistoryPage() {
             {filteredMovements.map((movement) => (
               <TableRow key={movement._id}>
                 <TableCell>
-                  {new Date(movement.createdAt).toLocaleDateString()} {' '}
+                  {new Date(movement.createdAt).toLocaleDateString()}{' '}
                   {new Date(movement.createdAt).toLocaleTimeString()}
                 </TableCell>
                 <TableCell>
@@ -195,7 +198,9 @@ export default function StockHistoryPage() {
                   </Box>
                 </TableCell>
                 <TableCell>
-                  {movement.partId && typeof movement.partId === 'object' && 'name' in movement.partId ? (
+                  {movement.partId &&
+                  typeof movement.partId === 'object' &&
+                  'name' in movement.partId ? (
                     <Box>
                       <Typography variant="body1">
                         {(movement.partId as any).name}

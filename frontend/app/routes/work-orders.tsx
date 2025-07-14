@@ -45,9 +45,9 @@ import {
   Receipt,
   Remove,
 } from '@mui/icons-material';
-import { Layout } from '~/components/Layout';
-import { getAuthToken } from '~/utils/auth';
-import { workOrdersApi, partsApi, WorkOrder, Part } from '~/utils/api';
+import { Layout } from '../components/Layout';
+import { getAuthToken } from '../utils/auth';
+import { workOrdersApi, partsApi, WorkOrder, Part } from '../utils/api';
 
 interface WorkOrderFormData {
   customer: {
@@ -80,9 +80,13 @@ export default function WorkOrdersPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [editingWorkOrder, setEditingWorkOrder] = useState<WorkOrder | null>(null);
+  const [editingWorkOrder, setEditingWorkOrder] = useState<WorkOrder | null>(
+    null
+  );
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [workOrderToDelete, setWorkOrderToDelete] = useState<WorkOrder | null>(null);
+  const [workOrderToDelete, setWorkOrderToDelete] = useState<WorkOrder | null>(
+    null
+  );
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState<WorkOrderFormData>({
@@ -138,16 +142,25 @@ export default function WorkOrdersPage() {
     let filtered = workOrders;
 
     if (statusFilter !== 'all') {
-      filtered = filtered.filter(order => order.status === statusFilter);
+      filtered = filtered.filter((order) => order.status === statusFilter);
     }
 
     if (searchTerm) {
-      filtered = filtered.filter(order =>
-        order.workOrderNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        order.customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        order.vehicleInfo.make.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        order.vehicleInfo.model.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        order.vehicleInfo.plateNumber?.toLowerCase().includes(searchTerm.toLowerCase())
+      filtered = filtered.filter(
+        (order) =>
+          order.workOrderNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          order.customer.name
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase()) ||
+          order.vehicleInfo.make
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase()) ||
+          order.vehicleInfo.model
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase()) ||
+          order.vehicleInfo.plateNumber
+            ?.toLowerCase()
+            .includes(searchTerm.toLowerCase())
       );
     }
 
@@ -157,7 +170,7 @@ export default function WorkOrdersPage() {
   const loadData = async () => {
     try {
       setLoading(true);
-      
+
       // Load work orders
       const workOrdersResponse = await workOrdersApi.getAll();
       if (workOrdersResponse.success && workOrdersResponse.data) {
@@ -221,11 +234,12 @@ export default function WorkOrdersPage() {
       },
       laborCost: workOrder.laborCost,
       notes: workOrder.notes || '',
-      parts: workOrder.parts?.map(wp => ({
-        partId: wp.partId._id,
-        quantity: wp.quantity,
-        part: parts.find(p => p._id === wp.partId._id),
-      })) || [],
+      parts:
+        workOrder.parts?.map((wp) => ({
+          partId: wp.partId._id,
+          quantity: wp.quantity,
+          part: parts.find((p) => p._id === wp.partId._id),
+        })) || [],
     });
     setDialogOpen(true);
   };
@@ -242,7 +256,7 @@ export default function WorkOrdersPage() {
         vehicleInfo: formData.vehicleInfo,
         laborCost: formData.laborCost,
         notes: formData.notes,
-        parts: formData.parts.map(p => ({
+        parts: formData.parts.map((p) => ({
           partId: p.partId,
           quantity: p.quantity,
         })),
@@ -310,7 +324,7 @@ export default function WorkOrdersPage() {
     const newParts = [...formData.parts];
     if (field === 'partId') {
       newParts[index] = { ...newParts[index], partId: value };
-      const selectedPart = parts.find(p => p._id === value);
+      const selectedPart = parts.find((p) => p._id === value);
       if (selectedPart) {
         newParts[index].part = selectedPart;
       }
@@ -322,7 +336,7 @@ export default function WorkOrdersPage() {
 
   const calculateTotal = () => {
     const partsTotal = formData.parts.reduce((sum, p) => {
-      const part = parts.find(part => part._id === p.partId);
+      const part = parts.find((part) => part._id === p.partId);
       return sum + (part ? part.unitPrice * p.quantity : 0);
     }, 0);
     return partsTotal + formData.laborCost;
@@ -340,7 +354,14 @@ export default function WorkOrdersPage() {
 
   return (
     <Layout>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mb: 3,
+        }}
+      >
         <Typography variant="h4">Work Orders</Typography>
         <Button
           variant="contained"
@@ -391,7 +412,11 @@ export default function WorkOrdersPage() {
             <CardContent sx={{ textAlign: 'center' }}>
               <Typography variant="h6">{filteredWorkOrders.length}</Typography>
               <Typography variant="body2" color="textSecondary">
-                {statusFilter === 'all' ? 'Total Orders' : `${statuses.find(s => s.value === statusFilter)?.label} Orders`}
+                {statusFilter === 'all'
+                  ? 'Total Orders'
+                  : `${
+                      statuses.find((s) => s.value === statusFilter)?.label
+                    } Orders`}
               </Typography>
             </CardContent>
           </Card>
@@ -418,7 +443,9 @@ export default function WorkOrdersPage() {
                 <TableCell>{order.workOrderNo}</TableCell>
                 <TableCell>
                   <Box>
-                    <Typography variant="body1">{order.customer.name}</Typography>
+                    <Typography variant="body1">
+                      {order.customer.name}
+                    </Typography>
                     {order.customer.phone && (
                       <Typography variant="body2" color="textSecondary">
                         {order.customer.phone}
@@ -432,7 +459,9 @@ export default function WorkOrdersPage() {
                       {order.vehicleInfo.make} {order.vehicleInfo.model}
                     </Typography>
                     <Typography variant="body2" color="textSecondary">
-                      {order.vehicleInfo.year} {order.vehicleInfo.plateNumber && `• ${order.vehicleInfo.plateNumber}`}
+                      {order.vehicleInfo.year}{' '}
+                      {order.vehicleInfo.plateNumber &&
+                        `• ${order.vehicleInfo.plateNumber}`}
                     </Typography>
                   </Box>
                 </TableCell>
@@ -462,7 +491,12 @@ export default function WorkOrdersPage() {
       </TableContainer>
 
       {/* Add/Edit Work Order Dialog */}
-      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} maxWidth="lg" fullWidth>
+      <Dialog
+        open={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        maxWidth="lg"
+        fullWidth
+      >
         <DialogTitle>
           {editingWorkOrder ? 'Edit Work Order' : 'Create Work Order'}
         </DialogTitle>
@@ -481,10 +515,12 @@ export default function WorkOrdersPage() {
                 fullWidth
                 label="Customer Name"
                 value={formData.customer.name}
-                onChange={(e) => setFormData({
-                  ...formData,
-                  customer: { ...formData.customer, name: e.target.value }
-                })}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    customer: { ...formData.customer, name: e.target.value },
+                  })
+                }
                 required
               />
             </Grid>
@@ -493,10 +529,12 @@ export default function WorkOrdersPage() {
                 fullWidth
                 label="Phone"
                 value={formData.customer.phone}
-                onChange={(e) => setFormData({
-                  ...formData,
-                  customer: { ...formData.customer, phone: e.target.value }
-                })}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    customer: { ...formData.customer, phone: e.target.value },
+                  })
+                }
               />
             </Grid>
             <Grid item xs={12}>
@@ -505,10 +543,12 @@ export default function WorkOrdersPage() {
                 label="Email"
                 type="email"
                 value={formData.customer.email}
-                onChange={(e) => setFormData({
-                  ...formData,
-                  customer: { ...formData.customer, email: e.target.value }
-                })}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    customer: { ...formData.customer, email: e.target.value },
+                  })
+                }
               />
             </Grid>
 
@@ -525,10 +565,15 @@ export default function WorkOrdersPage() {
                 fullWidth
                 label="Make"
                 value={formData.vehicleInfo.make}
-                onChange={(e) => setFormData({
-                  ...formData,
-                  vehicleInfo: { ...formData.vehicleInfo, make: e.target.value }
-                })}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    vehicleInfo: {
+                      ...formData.vehicleInfo,
+                      make: e.target.value,
+                    },
+                  })
+                }
                 required
               />
             </Grid>
@@ -537,10 +582,15 @@ export default function WorkOrdersPage() {
                 fullWidth
                 label="Model"
                 value={formData.vehicleInfo.model}
-                onChange={(e) => setFormData({
-                  ...formData,
-                  vehicleInfo: { ...formData.vehicleInfo, model: e.target.value }
-                })}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    vehicleInfo: {
+                      ...formData.vehicleInfo,
+                      model: e.target.value,
+                    },
+                  })
+                }
                 required
               />
             </Grid>
@@ -550,10 +600,15 @@ export default function WorkOrdersPage() {
                 label="Year"
                 type="number"
                 value={formData.vehicleInfo.year}
-                onChange={(e) => setFormData({
-                  ...formData,
-                  vehicleInfo: { ...formData.vehicleInfo, year: parseInt(e.target.value) || 0 }
-                })}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    vehicleInfo: {
+                      ...formData.vehicleInfo,
+                      year: parseInt(e.target.value) || 0,
+                    },
+                  })
+                }
                 required
               />
             </Grid>
@@ -562,10 +617,15 @@ export default function WorkOrdersPage() {
                 fullWidth
                 label="Plate Number"
                 value={formData.vehicleInfo.plateNumber}
-                onChange={(e) => setFormData({
-                  ...formData,
-                  vehicleInfo: { ...formData.vehicleInfo, plateNumber: e.target.value }
-                })}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    vehicleInfo: {
+                      ...formData.vehicleInfo,
+                      plateNumber: e.target.value,
+                    },
+                  })
+                }
               />
             </Grid>
             <Grid item xs={12} md={4}>
@@ -574,10 +634,15 @@ export default function WorkOrdersPage() {
                 label="Mileage"
                 type="number"
                 value={formData.vehicleInfo.mileage}
-                onChange={(e) => setFormData({
-                  ...formData,
-                  vehicleInfo: { ...formData.vehicleInfo, mileage: parseInt(e.target.value) || 0 }
-                })}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    vehicleInfo: {
+                      ...formData.vehicleInfo,
+                      mileage: parseInt(e.target.value) || 0,
+                    },
+                  })
+                }
               />
             </Grid>
 
@@ -592,7 +657,14 @@ export default function WorkOrdersPage() {
 
             {/* Parts Selection */}
             <Grid item xs={12}>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  mb: 2,
+                }}
+              >
                 <Typography variant="body1">Parts</Typography>
                 <Button
                   variant="outlined"
@@ -611,7 +683,9 @@ export default function WorkOrdersPage() {
                       <Select
                         value={part.partId}
                         label="Part"
-                        onChange={(e) => handlePartChange(index, 'partId', e.target.value)}
+                        onChange={(e) =>
+                          handlePartChange(index, 'partId', e.target.value)
+                        }
                         disabled={editingWorkOrder !== null}
                       >
                         {parts.map((p) => (
@@ -628,14 +702,24 @@ export default function WorkOrdersPage() {
                       label="Quantity"
                       type="number"
                       value={part.quantity}
-                      onChange={(e) => handlePartChange(index, 'quantity', parseInt(e.target.value) || 1)}
+                      onChange={(e) =>
+                        handlePartChange(
+                          index,
+                          'quantity',
+                          parseInt(e.target.value) || 1
+                        )
+                      }
                       disabled={editingWorkOrder !== null}
                       inputProps={{ min: 1 }}
                     />
                   </Grid>
                   <Grid item xs={2}>
                     <Typography variant="body1" sx={{ mt: 2 }}>
-                      ${((parts.find(p => p._id === part.partId)?.unitPrice || 0) * part.quantity).toFixed(2)}
+                      $
+                      {(
+                        (parts.find((p) => p._id === part.partId)?.unitPrice ||
+                          0) * part.quantity
+                      ).toFixed(2)}
                     </Typography>
                   </Grid>
                   <Grid item xs={1}>
@@ -657,10 +741,12 @@ export default function WorkOrdersPage() {
                 label="Labor Cost"
                 type="number"
                 value={formData.laborCost}
-                onChange={(e) => setFormData({
-                  ...formData,
-                  laborCost: parseFloat(e.target.value) || 0
-                })}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    laborCost: parseFloat(e.target.value) || 0,
+                  })
+                }
                 inputProps={{ min: 0, step: 0.01 }}
               />
             </Grid>
@@ -682,7 +768,9 @@ export default function WorkOrdersPage() {
                 fullWidth
                 label="Notes"
                 value={formData.notes}
-                onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, notes: e.target.value })
+                }
                 multiline
                 rows={3}
               />
@@ -698,10 +786,14 @@ export default function WorkOrdersPage() {
       </Dialog>
 
       {/* Delete Confirmation Dialog */}
-      <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+      >
         <DialogTitle>Confirm Delete</DialogTitle>
         <DialogContent>
-          Are you sure you want to delete work order "{workOrderToDelete?.workOrderNo}"?
+          Are you sure you want to delete work order "
+          {workOrderToDelete?.workOrderNo}"?
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
