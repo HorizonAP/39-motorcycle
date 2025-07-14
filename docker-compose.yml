@@ -1,21 +1,5 @@
-version: '3.8'
 
 services:
-  mongodb:
-    image: mongo:7
-    container_name: workshop-mongodb
-    restart: unless-stopped
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: workshop
-      MONGO_INITDB_ROOT_PASSWORD: workshop123
-      MONGO_INITDB_DATABASE: workshop
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongodb_data:/data/db
-    networks:
-      - workshop-network
-
   backend:
     build:
       context: ./backend
@@ -24,13 +8,12 @@ services:
     restart: unless-stopped
     environment:
       - NODE_ENV=production
-      - DATABASE_URL=mongodb://workshop:workshop123@mongodb:27017/workshop?authSource=admin
+      - DATABASE_URL=mongodb+srv://39-yan-yon:HX6yXQjAHzfjuD2n@cluster0.ksjqymp.mongodb.net/motorcycle-workshop?retryWrites=true&w=majority&appName=Cluster0
       - JWT_SECRET=your-jwt-secret-change-in-production
       - PORT=3001
+      - CORS_ORIGIN=http://localhost:3000
     ports:
       - "3001:3001"
-    depends_on:
-      - mongodb
     networks:
       - workshop-network
 
@@ -50,8 +33,7 @@ services:
     networks:
       - workshop-network
 
-volumes:
-  mongodb_data:
+volumes: {}
 
 networks:
   workshop-network:

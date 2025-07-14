@@ -27,7 +27,12 @@ export const api = {
     return response.json();
   },
 
-  async register(name: string, email: string, password: string, role: 'admin' | 'user' = 'user'): Promise<AuthResponse> {
+  async register(
+    name: string,
+    email: string,
+    password: string,
+    role: 'admin' | 'user' = 'user'
+  ): Promise<AuthResponse> {
     const response = await fetch(`${API_URL}/auth/register`, {
       method: 'POST',
       headers: {
@@ -42,7 +47,7 @@ export const api = {
   async verifyToken(token: string): Promise<AuthResponse> {
     const response = await fetch(`${API_URL}/auth/verify`, {
       headers: {
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     });
 
@@ -51,21 +56,40 @@ export const api = {
 
   async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
     const token = getAuthToken();
-    
-    const response = await fetch(`${API_URL}${endpoint}`, {
-      ...options,
-      headers: {
-        'Content-Type': 'application/json',
-        ...(token && { 'Authorization': `Bearer ${token}` }),
-        ...options.headers,
-      },
-    });
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+    try {
+      const response = await fetch(`${API_URL}${endpoint}`, {
+        ...options,
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token && { Authorization: `Bearer ${token}` }),
+          ...options.headers,
+        },
+      });
+
+      // Handle authentication errors
+      if (response.status === 401) {
+        removeAuthToken();
+        removeUser();
+        // Redirect to login if we're in the browser
+        if (typeof window !== 'undefined') {
+          window.location.href = '/login';
+        }
+        throw new Error('Authentication required');
+      }
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          errorData.message || `HTTP error! status: ${response.status}`
+        );
+      }
+
+      return response.json();
+    } catch (error) {
+      console.error('API request failed:', error);
+      throw error;
     }
-
-    return response.json();
   },
 };
 
